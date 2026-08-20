@@ -40,7 +40,7 @@ func (s *MemoryStore) Get(ctx context.Context, n, m, v string) (Package, error) 
 	defer s.mu.RUnlock()
 	p, ok := s.data[key(n, m, v)]
 	if !ok {
-		return Package{}, fmt.Errorf("package %s/%s@%s: %v", n, m, v, ErrNotFound)
+		return Package{}, fmt.Errorf("package %s/%s@%s: %w", n, m, v, ErrNotFound)
 	}
 	return p, nil
 }

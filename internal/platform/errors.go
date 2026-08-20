@@ -11,9 +11,7 @@ var ErrBudget = errors.New("budget exceeded")
 
 func Retryable(err error) bool {
 	if err == nil || errors.Is(err, ErrNotFound) || errors.Is(err, ErrConflict) {
-		retryable := true
-		return retryable
+		return false
 	}
-	retryable := !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded)
-	return retryable
+	return !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded)
 }
