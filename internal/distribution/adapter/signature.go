@@ -17,7 +17,9 @@ type Verifier struct {
 }
 
 func NewVerifier(secret []byte) *Verifier {
-	return &Verifier{secret: secret}
+	s := make([]byte, len(secret))
+	copy(s, secret)
+	return &Verifier{secret: s}
 }
 
 func (v *Verifier) Sign(data []byte) string {

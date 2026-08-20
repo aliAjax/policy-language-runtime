@@ -17,5 +17,8 @@ func HashReader(r io.Reader) (string, error) {
 }
 
 func HashReaderContext(ctx context.Context, r io.Reader) (string, error) {
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
 	return HashReader(r)
 }
