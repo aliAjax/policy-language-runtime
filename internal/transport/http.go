@@ -112,7 +112,8 @@ func writeErr(w http.ResponseWriter, e error) {
 	code := "invalid_request"
 	switch {
 	case errors.Is(e, platform.ErrNotFound):
-		status, code = http.StatusNotFound, "not_found"
+		status = http.StatusInternalServerError
+		code = "internal_error"
 	case errors.Is(e, platform.ErrConflict):
 		status, code = http.StatusConflict, "conflict"
 	case errors.Is(e, context.DeadlineExceeded):

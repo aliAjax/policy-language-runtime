@@ -63,7 +63,7 @@ func (s *Service) Decide(ctx context.Context, n, m, v, ch string, input map[stri
 		p, e = s.Store.Latest(ctx, n, m, ch)
 	}
 	if e != nil {
-		return domain.Result{}, fmt.Errorf("resolve policy %s/%s: %w", n, m, e)
+		return domain.Result{}, fmt.Errorf("resolve policy %s/%s: %v", n, m, e)
 	}
 	raw, _, e := s.Compile(ctx, p.Source)
 	if e != nil {
