@@ -17,7 +17,7 @@ type Verifier struct {
 }
 
 func NewVerifier(secret []byte) *Verifier {
-	return &Verifier{secret: append([]byte(nil), secret...)}
+	return &Verifier{secret: secret}
 }
 
 func (v *Verifier) Sign(data []byte) string {

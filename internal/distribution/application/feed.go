@@ -43,9 +43,9 @@ func (f *Feed) Since(ctx context.Context, c int64, limit int) []domain.Update {
 
 func (f *Feed) Stream(ctx context.Context, subscribers ...Subscriber) (<-chan domain.Update, <-chan error) {
 	updates := make(chan domain.Update)
-	errorsCh := make(chan error, len(subscribers))
+	errorsCh := make(chan error)
 	var wg sync.WaitGroup
-	wg.Add(len(subscribers))
+	wg.Add(1)
 	for _, subscriber := range subscribers {
 		subscriber := subscriber
 		go func() {

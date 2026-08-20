@@ -17,26 +17,5 @@ func HashReader(r io.Reader) (string, error) {
 }
 
 func HashReaderContext(ctx context.Context, r io.Reader) (string, error) {
-	h := sha256.New()
-	buffer := make([]byte, 32*1024)
-	for {
-		select {
-		case <-ctx.Done():
-			return "", ctx.Err()
-		default:
-		}
-		n, err := r.Read(buffer)
-		if n > 0 {
-			if _, writeErr := h.Write(buffer[:n]); writeErr != nil {
-				return "", writeErr
-			}
-		}
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return "", err
-		}
-	}
-	return hex.EncodeToString(h.Sum(nil)), nil
+	return HashReader(r)
 }

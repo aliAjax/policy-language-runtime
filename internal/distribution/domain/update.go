@@ -9,6 +9,5 @@ type Update struct {
 type Cursor struct{ Value int64 }
 
 func (u Update) Clone() Update {
-	u.Payload = append([]byte(nil), u.Payload...)
 	return u
 }

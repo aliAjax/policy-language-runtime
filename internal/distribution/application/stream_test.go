@@ -41,11 +41,23 @@ func TestFeedClosesAfterVerifierError(t *testing.T) {
 	input <- domain.Update{Payload: []byte("payload"), Signature: "bad"}
 	close(input)
 	updates, errs := app.New().Stream(context.Background(), app.SignedSubscriber(adapter.NewVerifier([]byte("secret")), input))
-	if got := collect(updates); len(got) != 0 {
-		t.Fatalf("bad update was published: %#v", got)
+	done := make(chan []domain.Update, 1)
+	go func() { done <- collect(updates) }()
+	select {
+	case got := <-done:
+		if len(got) != 0 {
+			t.Fatalf("bad update was published: %#v", got)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("update channel did not close after verifier error")
 	}
-	if err := <-errs; err == nil {
-		t.Fatal("signature failure was lost")
+	select {
+	case err := <-errs:
+		if err == nil {
+			t.Fatal("signature failure was lost")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("verifier error was never delivered")
 	}
 }
 
