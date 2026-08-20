@@ -28,16 +28,10 @@ func (s *Service) RegisterBatch(ctx context.Context, modules []domain.Module) er
 	if len(modules) == 0 {
 		return fmt.Errorf("module batch is empty")
 	}
-	cloned := make([]domain.Module, len(modules))
 	for i, module := range modules {
-		if err := module.Validate(); err != nil {
+		if err := s.Register(ctx, module); err != nil {
 			return fmt.Errorf("module %d: %w", i, err)
 		}
-		cloned[i] = module.Clone()
 	}
-	repo, ok := s.Repo.(BatchRepository)
-	if !ok {
-		return fmt.Errorf("repository does not support atomic batches")
-	}
-	return repo.SaveBatch(ctx, cloned)
+	return nil
 }

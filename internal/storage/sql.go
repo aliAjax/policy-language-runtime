@@ -38,14 +38,16 @@ func WithTransaction(ctx context.Context, begin BeginFunc, work func(Transaction
 	if tx == nil {
 		return fmt.Errorf("begin transaction: nil transaction")
 	}
-	if err = work(tx); err != nil {
-		if rollbackErr := tx.Rollback(); rollbackErr != nil {
-			return errors.Join(err, fmt.Errorf("rollback transaction: %w", rollbackErr))
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				err = errors.Join(err, fmt.Errorf("rollback transaction: %w", rollbackErr))
+			}
 		}
-		return err
-	}
-	if err = tx.Commit(); err != nil {
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-	return nil
+		if commitErr := tx.Commit(); commitErr != nil {
+			err = fmt.Errorf("commit transaction: %w", commitErr)
+		}
+	}()
+	err = work(tx)
+	return err
 }

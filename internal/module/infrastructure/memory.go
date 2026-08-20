@@ -30,33 +30,11 @@ func (m *Memory) Save(ctx context.Context, x domain.Module) error {
 }
 
 func (m *Memory) SaveBatch(ctx context.Context, modules []domain.Module) error {
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	default:
-	}
 	for i, module := range modules {
-		if err := module.Validate(); err != nil {
+		if err := m.Save(ctx, module); err != nil {
 			return fmt.Errorf("module %d: %w", i, err)
 		}
 	}
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	nextItems := make(map[string]domain.Module, len(m.items)+len(modules))
-	for key, module := range m.items {
-		nextItems[key] = module.Clone()
-	}
-	nextVersions := make(map[string][]string, len(m.versions)+len(modules))
-	for key, versions := range m.versions {
-		nextVersions[key] = append([]string(nil), versions...)
-	}
-	for _, module := range modules {
-		nextItems[module.Key()] = module.Clone()
-		if module.Version != "" {
-			nextVersions[module.Key()] = append(nextVersions[module.Key()], module.Version)
-		}
-	}
-	m.items, m.versions = nextItems, nextVersions
 	return nil
 }
 func (m *Memory) Versions(ctx context.Context, k string) ([]string, error) {

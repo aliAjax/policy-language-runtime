@@ -13,7 +13,7 @@ type Module struct {
 
 func (m Module) Key() string { return m.Namespace + "/" + m.Name }
 func (m Module) Validate() error {
-	if strings.TrimSpace(m.Namespace) == "" || strings.TrimSpace(m.Name) == "" {
+	if strings.TrimSpace(m.Namespace) == "" && strings.TrimSpace(m.Name) == "" {
 		return fmt.Errorf("module identity required")
 	}
 	for _, dependency := range m.Imports {

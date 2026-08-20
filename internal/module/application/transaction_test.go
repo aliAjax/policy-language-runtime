@@ -20,6 +20,21 @@ type fakeTx struct {
 func (f *fakeTx) Commit() error   { f.commits++; return f.commitErr }
 func (f *fakeTx) Rollback() error { f.rollbacks++; return f.rollbackErr }
 
+type countingRepo struct {
+	saves      int
+	batchCalls int
+}
+
+func (r *countingRepo) Save(context.Context, domain.Module) error {
+	r.saves++
+	return nil
+}
+func (r *countingRepo) Versions(context.Context, string) ([]string, error) { return nil, nil }
+func (r *countingRepo) SaveBatch(context.Context, []domain.Module) error {
+	r.batchCalls++
+	return nil
+}
+
 func TestBatchFailureRollsBack(t *testing.T) {
 	tx := &fakeTx{}
 	want := errors.New("validation failed")
@@ -58,14 +73,25 @@ func TestBatchResourcesClosePerItem(t *testing.T) {
 	}
 }
 
+func TestRegisterBatchUsesAtomicRepository(t *testing.T) {
+	repo := &countingRepo{}
+	svc := moduleapp.New(repo)
+	modules := []domain.Module{{Namespace: "acme", Name: "access"}, {Namespace: "acme", Name: "billing"}}
+	if err := svc.RegisterBatch(context.Background(), modules); err != nil {
+		t.Fatal(err)
+	}
+	if repo.batchCalls != 1 || repo.saves != 0 {
+		t.Fatalf("batch bypassed atomic repository call: %#v", repo)
+	}
+}
+
 func TestFailedBatchLeavesNoModules(t *testing.T) {
 	repo := infrastructure.New()
-	svc := moduleapp.New(repo)
 	modules := []domain.Module{
 		{Namespace: "acme", Name: "access", Version: "1.0.0"},
 		{Namespace: "", Name: "broken", Version: "1.0.0"},
 	}
-	if err := svc.RegisterBatch(context.Background(), modules); err == nil {
+	if err := repo.SaveBatch(context.Background(), modules); err == nil {
 		t.Fatal("invalid batch was accepted")
 	}
 	if repo.Exists("acme/access") {

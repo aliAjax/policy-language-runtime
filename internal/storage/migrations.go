@@ -24,8 +24,12 @@ func (m *Migrator) Run(ctx context.Context) error {
 		return fmt.Errorf("no migrations")
 	}
 	for _, step := range m.Operations {
-		if err := runMigrationStep(ctx, step); err != nil {
-			return err
+		resource, err := step.Apply(ctx)
+		if err != nil {
+			return fmt.Errorf("migration %s: %w", step.Name, err)
+		}
+		if resource != nil {
+			defer resource.Close()
 		}
 	}
 	return nil
