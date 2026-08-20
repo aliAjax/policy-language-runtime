@@ -10,9 +10,7 @@ type Compiler struct{ p domain.Program }
 
 func New() *Compiler { return &Compiler{} }
 func (c *Compiler) Compile(src *ast.Program) (domain.Program, error) {
-	c.p.Code = c.p.Code[:0]
-	c.p.Consts = c.p.Consts[:0]
-	c.p.Deps = c.p.Deps[:0]
+	c.p = domain.Program{}
 	for _, s := range src.Statements {
 		if e := c.stmt(s); e != nil {
 			return domain.Program{}, e

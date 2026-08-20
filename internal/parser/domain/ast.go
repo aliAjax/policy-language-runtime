@@ -60,7 +60,11 @@ func CloneProgram(p *Program) *Program {
 	if p == nil {
 		return nil
 	}
-	return &Program{Statements: append([]Stmt(nil), p.Statements...)}
+	out := &Program{Statements: make([]Stmt, 0, len(p.Statements))}
+	for _, stmt := range p.Statements {
+		out.Statements = append(out.Statements, cloneStmt(stmt))
+	}
+	return out
 }
 
 func cloneStmt(stmt Stmt) Stmt {

@@ -27,5 +27,11 @@ type Program struct {
 }
 
 func (p Program) Clone() Program {
-	return p
+	out := Program{
+		Consts: append([]any(nil), p.Consts...),
+		Deps:   append([]string(nil), p.Deps...),
+	}
+	out.Code = make([]Instr, len(p.Code))
+	copy(out.Code, p.Code)
+	return out
 }
