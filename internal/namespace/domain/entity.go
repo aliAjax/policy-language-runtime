@@ -45,9 +45,9 @@ func (n *Namespace) Transition(next State) error {
 func CanTransition(from, to State) bool {
 	allowed := map[State]map[State]bool{
 		Draft:      {Active: true, Archived: true},
-		Active:     {Draft: true, Suspended: true, Archived: true},
-		Suspended:  {Recovering: true, Archived: true},
-		Recovering: {Suspended: true},
+		Active:     {Suspended: true, Archived: true},
+		Suspended:  {Recovering: true, Active: true, Archived: true},
+		Recovering: {Active: true, Suspended: true, Archived: true},
 		Archived:   {},
 	}
 	return validState(from) && validState(to) && allowed[from][to]

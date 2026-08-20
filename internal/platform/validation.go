@@ -125,8 +125,9 @@ func (r *Release) Resume()          { r.Paused = false }
 func (r *Release) Activate()        { r.Active, r.State = true, "active" }
 func (r *Release) Deactivate()      { r.Active, r.State = false, "suspended" }
 func (r *Release) Recover() {
-	r.State = "recovering"
+	r.Active = true
 	r.Paused = false
+	r.State = "active"
 }
 
 type DependencyGraph struct{ Edges map[string][]string }
