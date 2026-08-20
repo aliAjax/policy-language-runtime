@@ -39,11 +39,6 @@ func Load() Config {
 			c.MaxSteps = n
 		}
 	}
-	if v := os.Getenv("POLICY_EXEC_TIMEOUT"); v != "" {
-		if d, e := time.ParseDuration(v); e == nil {
-			c.ExecTimeout = d
-		}
-	}
 	return c
 }
 

@@ -14,7 +14,7 @@ func (g *GRPCServer) Compile(ctx context.Context, source string) (bool, error) {
 			err error
 		}, 1)
 		go func() {
-			ok, err := g.Compiler(ctx, source)
+			ok, err := g.Compiler(context.Background(), source)
 			result <- struct {
 				ok  bool
 				err error

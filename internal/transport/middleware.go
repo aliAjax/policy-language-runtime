@@ -26,7 +26,7 @@ func (t Timeout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		t.Next.ServeHTTP(w, r)
 		return
 	}
-	ctx, c := context.WithTimeout(r.Context(), t.Duration)
+	ctx, c := context.WithTimeout(context.Background(), t.Duration)
 	defer c()
 	t.Next.ServeHTTP(w, r.WithContext(ctx))
 }

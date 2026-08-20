@@ -38,7 +38,7 @@ func main() {
 }
 
 func shutdownContext(timeout time.Duration) (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), timeout)
+	return context.WithCancel(context.Background())
 }
 
 func env(k, d string) string {
