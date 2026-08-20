@@ -37,10 +37,14 @@ func New() *Evaluator {
 	return e
 }
 func (e *Evaluator) Register(n string, f Function) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	e.funcs[n] = f
 }
 
 func (e *Evaluator) function(name string) (Function, bool) {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
 	f, ok := e.funcs[name]
 	return f, ok
 }

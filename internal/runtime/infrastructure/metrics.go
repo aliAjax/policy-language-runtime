@@ -8,17 +8,17 @@ type Metrics struct {
 }
 
 func (m *Metrics) IncRequest() { m.Record(false) }
-func (m *Metrics) IncError() {
+func (m *Metrics) IncError() { m.Record(true) }
+func (m *Metrics) Record(failed bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.Errors++
-}
-func (m *Metrics) Record(failed bool) {
 	m.Requests++
 	if failed {
 		m.Errors++
 	}
 }
 func (m *Metrics) Snapshot() (uint64, uint64) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	return m.Requests, m.Errors
 }
