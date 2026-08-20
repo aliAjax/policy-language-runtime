@@ -17,9 +17,5 @@ type Result struct {
 }
 
 func (r Result) Clone() Result {
-	r.Steps = append([]string(nil), r.Steps...)
-	if values, ok := r.Value.([]string); ok {
-		r.Value = append([]string(nil), values...)
-	}
 	return r
 }

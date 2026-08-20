@@ -15,12 +15,12 @@ func (c *Cache) Get(k string) (domain.Program, bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	p, ok := c.items[k]
-	return cloneProgram(p), ok
+	return p, ok
 }
 func (c *Cache) Put(k string, p domain.Program) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.items[k] = cloneProgram(p)
+	c.items[k] = p
 }
 
 func cloneProgram(p domain.Program) domain.Program {
