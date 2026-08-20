@@ -10,13 +10,15 @@ type Compiler struct{ p domain.Program }
 
 func New() *Compiler { return &Compiler{} }
 func (c *Compiler) Compile(src *ast.Program) (domain.Program, error) {
-	c.p = domain.Program{}
-	for _, s := range ast.CloneProgram(src).Statements {
+	c.p.Code = c.p.Code[:0]
+	c.p.Consts = c.p.Consts[:0]
+	c.p.Deps = c.p.Deps[:0]
+	for _, s := range src.Statements {
 		if e := c.stmt(s); e != nil {
 			return domain.Program{}, e
 		}
 	}
-	return c.p.Clone(), nil
+	return c.p, nil
 }
 func (c *Compiler) stmt(s ast.Stmt) error {
 	switch x := s.(type) {

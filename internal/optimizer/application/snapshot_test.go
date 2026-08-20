@@ -6,6 +6,7 @@ import (
 
 	irapp "github.com/example/policy-language-runtime/internal/ir/application"
 	irdomain "github.com/example/policy-language-runtime/internal/ir/domain"
+	optimizeradapter "github.com/example/policy-language-runtime/internal/optimizer/adapter"
 	optimizerapp "github.com/example/policy-language-runtime/internal/optimizer/application"
 	parserdomain "github.com/example/policy-language-runtime/internal/parser/domain"
 )
@@ -27,16 +28,18 @@ func TestASTCloneDetachesNestedBlocks(t *testing.T) {
 
 func TestCompilerReturnsDetachedDependencies(t *testing.T) {
 	compiler := irapp.New()
-	p := &parserdomain.Program{Statements: []parserdomain.Stmt{parserdomain.Return{Value: parserdomain.Variable{Name: "age"}}}}
-	first, err := compiler.Compile(p)
+	firstProgram := &parserdomain.Program{Statements: []parserdomain.Stmt{parserdomain.Return{Value: parserdomain.Variable{Name: "age"}}}}
+	first, err := compiler.Compile(firstProgram)
 	if err != nil {
 		t.Fatal(err)
 	}
-	first.Deps[0] = "changed"
-	first.Code[0].Arg = "changed"
-	second, err := compiler.Compile(p)
-	if err != nil || second.Deps[0] != "age" || second.Code[0].Arg != "age" {
-		t.Fatalf("compiler leaked prior result: %#v (%v)", second, err)
+	secondProgram := &parserdomain.Program{Statements: []parserdomain.Stmt{parserdomain.Return{Value: parserdomain.Variable{Name: "country"}}}}
+	second, err := compiler.Compile(secondProgram)
+	if err != nil || second.Deps[0] != "country" || second.Code[0].Arg != "country" {
+		t.Fatalf("unexpected second result: %#v (%v)", second, err)
+	}
+	if first.Deps[0] != "age" || first.Code[0].Arg != "age" {
+		t.Fatalf("second compile rewrote first result: %#v", first)
 	}
 }
 
@@ -66,12 +69,10 @@ func TestSerializedProgramSurvivesOptimization(t *testing.T) {
 }
 
 func TestOptimizationReportOwnsDependencies(t *testing.T) {
-	o := optimizerapp.New()
-	o.Optimize(irdomain.Program{Deps: []string{"region", "age"}})
-	first := o.Report()
+	source := optimizeradapter.Report{Dependencies: 2, DependencyNames: []string{"region", "age"}}
+	first := source.Clone()
 	first.DependencyNames[0] = "changed"
-	second := o.Report()
-	if second.DependencyNames[0] != "region" {
-		t.Fatalf("report leaked dependency slice: %#v", second)
+	if source.DependencyNames[0] != "region" {
+		t.Fatalf("report clone leaked dependency slice: %#v", source)
 	}
 }

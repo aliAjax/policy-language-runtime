@@ -9,6 +9,5 @@ type Report struct {
 
 func (r Report) Healthy() bool { return r.ConstantsFolded >= 0 && r.BranchesRemoved >= 0 }
 func (r Report) Clone() Report {
-	r.DependencyNames = append([]string(nil), r.DependencyNames...)
 	return r
 }

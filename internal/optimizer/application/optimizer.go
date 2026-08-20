@@ -15,8 +15,8 @@ func New() *Optimizer { return &Optimizer{} }
 func (o *Optimizer) Optimize(p domain.Program) domain.Program {
 	o.Folds = 0
 	o.deps = append([]string(nil), p.Deps...)
-	out := p.Clone()
-	code := make([]domain.Instr, 0, len(out.Code))
+	out := p
+	code := out.Code[:0]
 	for _, instruction := range out.Code {
 		if instruction.Op == domain.Binary && len(code) >= 2 && code[len(code)-1].Op == domain.LoadConst && code[len(code)-2].Op == domain.LoadConst {
 			if value, ok := fold(instruction.Arg, code[len(code)-2].Value, code[len(code)-1].Value); ok {
