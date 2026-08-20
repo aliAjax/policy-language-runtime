@@ -41,9 +41,6 @@ func (m *Memory) CompareAndSwap(ctx context.Context, id string, from, to domain.
 	if !ok {
 		return false, fmt.Errorf("namespace %s not found", id)
 	}
-	if n.CurrentState() != from {
-		return false, nil
-	}
 	if err := n.Transition(to); err != nil {
 		return false, err
 	}

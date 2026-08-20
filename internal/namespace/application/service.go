@@ -41,8 +41,5 @@ func (s *Service) ChangeState(ctx context.Context, id string, next domain.State)
 }
 
 func (s *Service) Recover(ctx context.Context, id string) error {
-	if err := s.ChangeState(ctx, id, domain.Recovering); err != nil {
-		return err
-	}
-	return s.ChangeState(ctx, id, domain.Active)
+	return s.ChangeState(ctx, id, domain.Recovering)
 }
