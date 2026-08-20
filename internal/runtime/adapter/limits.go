@@ -19,7 +19,6 @@ func (b *Budget) Record(step string) {
 }
 
 func (b Budget) Snapshot() Budget {
-	b.Trace = append([]string(nil), b.Trace...)
 	return b
 }
 

@@ -22,7 +22,7 @@ func (s *Service) Build(r runtime.Result) explain.Explanation {
 		children = append(children, explain.Node{Path: fmt.Sprintf("steps[%d]", i), Value: step})
 	}
 	out := explain.Explanation{Decision: string(r.Decision), Reason: r.Reason, Version: r.Version, Root: explain.Node{Path: "result", Value: v, Children: children}, Truncated: false}
-	return out.Clone()
+	return out
 }
 func (s *Service) Summary(r runtime.Result) string {
 	return fmt.Sprintf("decision=%s reason=%s", r.Decision, r.Reason)

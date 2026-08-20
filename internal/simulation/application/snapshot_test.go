@@ -43,11 +43,13 @@ func TestExplanationChildrenAreDetached(t *testing.T) {
 
 func TestSecondComparisonCannotRewriteFirst(t *testing.T) {
 	svc := simulationapp.New(runtimeapp.New())
-	samples := []domain.Sample{{ID: "s1", Input: map[string]any{}}}
-	first := svc.Compare(context.Background(), decisionProgram(true), decisionProgram(false), samples)
-	second := svc.Compare(context.Background(), decisionProgram(true), decisionProgram(true), samples)
-	if len(first.Changes) != 1 || len(second.Changes) != 0 {
+	first := svc.Compare(context.Background(), decisionProgram(true), decisionProgram(false), []domain.Sample{{ID: "s1", Input: map[string]any{}}})
+	second := svc.Compare(context.Background(), decisionProgram(false), decisionProgram(true), []domain.Sample{{ID: "s2", Input: map[string]any{}}})
+	if len(first.Changes) != 1 || len(second.Changes) != 1 {
 		t.Fatalf("comparison reports share state: first=%#v second=%#v", first, second)
+	}
+	if first.Changes[0].SampleID != "s1" || second.Changes[0].SampleID != "s2" {
+		t.Fatalf("second comparison rewrote first: first=%#v second=%#v", first, second)
 	}
 }
 

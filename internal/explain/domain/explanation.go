@@ -15,23 +15,6 @@ type Explanation struct {
 }
 
 func (n Node) Clone() Node {
-	children := n.Children
-	n.Children = make([]Node, len(children))
-	for i := range children {
-		n.Children[i] = children[i].Clone()
-	}
-	switch value := n.Value.(type) {
-	case []string:
-		n.Value = append([]string(nil), value...)
-	case []any:
-		n.Value = append([]any(nil), value...)
-	case map[string]any:
-		copyMap := make(map[string]any, len(value))
-		for key, item := range value {
-			copyMap[key] = item
-		}
-		n.Value = copyMap
-	}
 	return n
 }
 
