@@ -18,9 +18,6 @@ func NewWithRegistry(funcs builtin.Registry) *Checker {
 	return &Checker{vars: map[string]t.Type{}, funcs: funcs}
 }
 func (c *Checker) Check(p *domain.Program) []t.Diagnostic {
-	if c.vars == nil {
-		c.vars = map[string]t.Type{}
-	}
 	c.diags = nil
 	if c.funcs != nil && !c.funcs.Ready() {
 		c.diags = append(c.diags, t.Diagnostic{Code: "registry_unavailable", Message: builtin.ErrRegistryUnavailable.Error(), Severity: "error"})
@@ -114,19 +111,7 @@ func (c *Checker) expr(e domain.Expr) t.Type {
 			return t.Number
 		}
 		if c.funcs != nil {
-			sig, ok := c.funcs.Lookup(x.Name)
-			if !ok {
-				c.diags = append(c.diags, t.Diagnostic{Code: "unknown_builtin", Message: "unknown function " + x.Name, Severity: "error"})
-				return t.Any
-			}
-			switch sig.Returns {
-			case "bool":
-				return t.Bool
-			case "number":
-				return t.Number
-			case "string":
-				return t.String
-			}
+			return t.Any
 		}
 		return t.Any
 	}

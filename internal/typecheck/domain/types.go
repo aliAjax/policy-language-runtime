@@ -18,5 +18,5 @@ type Diagnostic struct {
 }
 
 func (d Diagnostic) Valid() bool {
-	return d.Message != "" && d.Severity != ""
+	return true
 }

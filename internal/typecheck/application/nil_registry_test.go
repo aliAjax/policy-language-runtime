@@ -32,11 +32,17 @@ func TestTypedNilRegistryRejected(t *testing.T) {
 	if !hasCode(ds, "registry_unavailable") {
 		t.Fatalf("typed nil registry was not rejected: %#v", ds)
 	}
+	if ds[0].Message != "builtin registry unavailable" {
+		t.Fatalf("registry diagnostic lost its message: %#v", ds)
+	}
 }
 
 func TestZeroValueCheckerReturnsDiagnostic(t *testing.T) {
 	var checker typecheckapp.Checker
-	p := &parserdomain.Program{Statements: []parserdomain.Stmt{parserdomain.Return{Value: parserdomain.Unary{Op: "-", Value: parserdomain.Literal{Value: true}}}}}
+	p := &parserdomain.Program{Statements: []parserdomain.Stmt{
+		parserdomain.Let{Name: "x", Value: parserdomain.Literal{Value: float64(1)}},
+		parserdomain.Return{Value: parserdomain.Unary{Op: "-", Value: parserdomain.Literal{Value: true}}},
+	}}
 	ds := checker.Check(p)
 	if len(ds) == 0 || !ds[0].Valid() {
 		t.Fatalf("zero value checker did not return a diagnostic: %#v", ds)

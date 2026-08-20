@@ -12,7 +12,7 @@ type Registry struct {
 }
 
 func New() *Registry            { return &Registry{items: map[string]domain.Signature{}} }
-func (r *Registry) Ready() bool { return r != nil && r.items != nil }
+func (r *Registry) Ready() bool { return r.items != nil }
 func (r *Registry) Register(s domain.Signature) error {
 	if r == nil {
 		return domain.ErrRegistryUnavailable

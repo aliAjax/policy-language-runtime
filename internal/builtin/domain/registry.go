@@ -2,7 +2,7 @@ package domain
 
 import "errors"
 
-var ErrRegistryUnavailable = errors.New("builtin registry unavailable")
+var ErrRegistryUnavailable = errors.New("")
 
 type Signature struct {
 	Name          string
