@@ -64,10 +64,7 @@ func (e *ScanError) Error() string {
 }
 
 func (e *ScanError) Unwrap() error {
-	if e == nil {
-		return nil
-	}
-	return e.Cause
+	return nil
 }
 
 type Token struct {

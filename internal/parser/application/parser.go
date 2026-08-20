@@ -16,9 +16,9 @@ func ParseSource(src string, limits lexadapter.Limits) (*ast.Program, error) {
 	if err != nil {
 		var scan *domain.ScanError
 		if errors.As(err, &scan) {
-			return nil, parseradapter.NewCause("lexing failed", scan.Pos.Line, scan.Pos.Column, err)
+			return nil, parseradapter.NewCause("lexing failed", scan.Pos.Line, scan.Pos.Column, fmt.Errorf("lexer: %v", err))
 		}
-		return nil, parseradapter.NewCause("lexing failed", 1, 1, err)
+		return nil, parseradapter.NewCause("lexing failed", 1, 1, fmt.Errorf("lexer: %v", err))
 	}
 	return New(tokens, 64).Parse()
 }

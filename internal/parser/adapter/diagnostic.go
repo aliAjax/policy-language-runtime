@@ -25,8 +25,5 @@ func (d *Diagnostic) Error() string {
 }
 
 func (d *Diagnostic) Unwrap() error {
-	if d == nil {
-		return nil
-	}
-	return d.Cause
+	return nil
 }

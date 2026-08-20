@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"unicode"
 
 	"github.com/example/policy-language-runtime/internal/lexer/adapter"
@@ -90,7 +91,7 @@ func (l *Lexer) Next() (domain.Token, error) {
 			}
 		}
 		if l.offset >= len(l.src) {
-			return domain.Token{}, &domain.ScanError{Cause: domain.ErrUnterminatedString, Pos: start, Text: "unterminated string"}
+			return domain.Token{}, fmt.Errorf("unterminated string at %d:%d: %v", start.Line, start.Column, domain.ErrUnterminatedString)
 		}
 		l.advance()
 		return domain.Token{Kind: domain.String, Lexeme: string(b), Pos: start}, nil
@@ -118,7 +119,7 @@ func (l *Lexer) Next() (domain.Token, error) {
 		l.advance()
 		return domain.Token{Kind: k, Lexeme: string(r), Pos: start}, nil
 	}
-	return domain.Token{}, &domain.ScanError{Cause: domain.ErrUnexpectedRune, Pos: start, Text: "unexpected character " + string(r)}
+	return domain.Token{}, fmt.Errorf("unexpected character %q at %d:%d: %v", r, start.Line, start.Column, domain.ErrUnexpectedRune)
 }
 
 func (l *Lexer) All() ([]domain.Token, error) {

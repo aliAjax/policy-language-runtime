@@ -14,10 +14,10 @@ func (l Limits) Accept(n int) bool { return n > 0 && n <= l.MaxBytes }
 
 func (l Limits) ValidateSource(src string) error {
 	if l.MaxBytes <= 0 || l.MaxTokens <= 0 || l.MaxLine <= 0 {
-		return &domain.ScanError{Cause: domain.ErrLimit, Pos: domain.Position{Line: 1, Column: 1}, Text: "invalid lexer limits"}
+		return fmt.Errorf("invalid lexer limits: %v", domain.ErrLimit)
 	}
 	if len(src) > l.MaxBytes {
-		return &domain.ScanError{Cause: domain.ErrLimit, Pos: domain.Position{Line: 1, Column: 1}, Text: fmt.Sprintf("source exceeds %d bytes", l.MaxBytes)}
+		return fmt.Errorf("source exceeds %d bytes: %v", l.MaxBytes, domain.ErrLimit)
 	}
 	line := 1
 	column := 0
@@ -31,7 +31,7 @@ func (l Limits) ValidateSource(src string) error {
 		}
 		column++
 		if column > l.MaxLine {
-			return &domain.ScanError{Cause: domain.ErrLimit, Pos: domain.Position{Line: line, Column: column}, Text: fmt.Sprintf("line exceeds %d runes", l.MaxLine)}
+			return fmt.Errorf("line %d exceeds %d runes: %v", line, l.MaxLine, domain.ErrLimit)
 		}
 	}
 	return nil
