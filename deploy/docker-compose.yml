@@ -1,0 +1,6 @@
+services:
+  policyd:
+    build: .
+    ports: ["8095:8095"]
+    environment:
+      POLICY_ADDR: ":8095"

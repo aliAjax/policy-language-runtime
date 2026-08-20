@@ -1,0 +1,5 @@
+addr: ":8095"
+max_body: 1048576
+max_steps: 10000
+exec_timeout: 5s
+storage: memory

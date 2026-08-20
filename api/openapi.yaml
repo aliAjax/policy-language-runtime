@@ -1,0 +1,6 @@
+openapi: 3.0.3
+info: {title: Policy Runtime API, version: 1.0.0}
+paths:
+  /v1/compile: {post: {responses: {200: {description: compiled}}}}
+  /v1/publish: {post: {responses: {200: {description: published}}}}
+  /v1/decide: {post: {responses: {200: {description: decision}}}}

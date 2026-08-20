@@ -1,0 +1,2 @@
+CREATE TABLE policy_versions (namespace_id TEXT NOT NULL, module_name TEXT NOT NULL, version TEXT NOT NULL, source TEXT NOT NULL, checksum TEXT NOT NULL, status TEXT NOT NULL, created_at TIMESTAMP NOT NULL, PRIMARY KEY(namespace_id,module_name,version));
+CREATE TABLE release_channels (namespace_id TEXT NOT NULL, module_name TEXT NOT NULL, channel TEXT NOT NULL, version TEXT NOT NULL, cursor BIGINT NOT NULL DEFAULT 0);
