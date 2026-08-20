@@ -8,13 +8,12 @@ import (
 )
 
 type Service struct {
-	Eval    *application.Evaluator
-	scratch []domain.Change
+	Eval *application.Evaluator
 }
 
 func New(e *application.Evaluator) *Service { return &Service{Eval: e} }
 func (s *Service) Compare(ctx context.Context, a, b irProgram, samples []domain.Sample) domain.Report {
-	r := domain.Report{Total: len(samples), Samples: make([]domain.Sample, len(samples)), Changes: s.scratch[:0]}
+	r := domain.Report{Total: len(samples), Samples: make([]domain.Sample, len(samples))}
 	for i := range samples {
 		r.Samples[i] = samples[i].Clone()
 	}
@@ -36,7 +35,6 @@ func (s *Service) Compare(ctx context.Context, a, b irProgram, samples []domain.
 			r.Changes = append(r.Changes, domain.Change{SampleID: x.ID, Before: string(ra.Decision), After: string(rb.Decision), Kind: "decision"})
 		}
 	}
-	s.scratch = r.Changes
 	return r
 }
 

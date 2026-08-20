@@ -6,6 +6,7 @@ type Sample struct {
 }
 
 func (s Sample) Clone() Sample {
+	s.Input = cloneInput(s.Input)
 	return s
 }
 

@@ -14,6 +14,9 @@ type Service struct {
 func New() *Service { return &Service{MaxDepth: 8, MaxBytes: 4096} }
 func (s *Service) Build(r runtime.Result) explain.Explanation {
 	v := r.Value
+	if values, ok := v.([]string); ok {
+		v = append([]string(nil), values...)
+	}
 	if s.MaxDepth < 1 {
 		return explain.Explanation{Decision: string(r.Decision), Reason: r.Reason, Version: r.Version, Truncated: true}
 	}
